@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - app_net
+  
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${password}
+      MYSQL_DATABASE: ${dbname}
+    volumes:
+      - ./tablemaker.sql:/docker-entrypoint-initdb.d/tablemaker.sql
+      - db_data:/var/lib/mysql
+    networks:
+      - app_net
+
+volumes:
+  db_data:
+
+networks:
+  app_net:
